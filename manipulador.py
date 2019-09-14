@@ -73,4 +73,32 @@ if __name__ == '__main__':
     cv2.imwrite("fotoBinaria.jpg", threshold)
     cv2.imshow('Foto binaria', cv2.convertScaleAbs(threshold))
     cv2.waitKey(0)
+
+    #Espaço de Hough
+    height, width = threshold.shape[:2]
+    theta_max = 1.0 * math.pi
+    theta_min = 0.0
+
+    r_min = 0.0
+    r_max = math.hypot(height, width)
+
+    r_dim = 400
+    theta_dim = 500
+
+    hough_space = np.zeros((r_dim, theta_dim))
+
+    for x in range(height):
+        for y in range(width):
+            if threshold[x, y] == 255: continue
+            for itheta in range(theta_dim):
+                theta = 1.0 * itheta * theta_max / theta_dim
+                r = x * math.cos(theta) + y * math.sin(theta)
+                ir = r_dim * (1.0 * r) / r_max
+                hough_space[int(ir), int(itheta)] = hough_space[int(ir), int(itheta)] + 1
+    cv2.normalize(hough_space,  hough_space, 0, 255, cv2.NORM_MINMAX)
+    cv2.imwrite("Hough.jpg", hough_space)
+    cv2.imshow("Espaco de Hough", cv2.convertScaleAbs(hough_space))
+    cv2.waitKey(0)
+
+
     cv2.destroyAllWindows()
